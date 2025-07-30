@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-FROM xychelsea/anaconda3:v0.5.1-gpu-jupyter
+FROM xychelsea/anaconda3:latest-gpu-jupyter
 LABEL description="FFmpeg GPU Container w/ Jupyter Notebooks"
 
 # $ docker build --network=host -t xychelsea/ffmpeg-nvidia:latest-jupyter -f Dockerfile.jupyter .
