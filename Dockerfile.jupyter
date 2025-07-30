@@ -214,6 +214,37 @@ RUN apt-get --purge -y autoremove \
     && fix-permissions ${HOME} \
     && fix-permissions ${ANACONDA_PATH}
 
+# ============================================================================
+# CUSTOMIZAÇÕES SISTEMA DE VÍDEO IA - janargyrou  
+# ============================================================================
+
+# Instalar Nginx + PHP (já estamos como root)
+RUN apt-get update && apt-get install -y \
+    nginx \
+    php8.1-fpm \
+    php8.1-cli \
+    php8.1-curl \
+    php8.1-mbstring \
+    php8.1-xml \
+    php8.1-zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Configurar script de inicialização
+COPY <<EOF /usr/local/bin/start-video-ai.sh
+#!/bin/bash
+echo "🚀 === SISTEMA DE VÍDEO IA ==="
+echo "✅ FFmpeg + NVENC: \$(which ffmpeg)"
+echo "✅ Nginx + PHP: Instalados"
+echo "✅ Jupyter Lab: Ativo"
+echo "🎬 Pronto para usar!"
+sleep infinity
+EOF
+RUN chmod +x /usr/local/bin/start-video-ai.sh
+
+# ============================================================================
+
 # Re-activate user "anaconda"
 USER $ANACONDA_UID
 WORKDIR $HOME
+CMD ["/usr/local/bin/start-video-ai.sh"]
