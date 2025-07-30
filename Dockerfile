@@ -213,7 +213,41 @@ RUN apt-get --purge -y autoremove \
     && rm -rvf /home/${ANACONDA_PATH}/.cache/yarn \
     && fix-permissions ${HOME} \
     && fix-permissions ${ANACONDA_PATH}
+# ============================================================================
+# CUSTOMIZAÇÕES PARA SISTEMA DE VÍDEO IA - jannargyrou
+# ============================================================================
+
+# Instalar Nginx + PHP (já estamos como root)
+RUN apt-get update && apt-get install -y \
+    nginx \
+    php8.1-fpm \
+    php8.1-cli \
+    php8.1-curl \
+    php8.1-mbstring \
+    php8.1-xml \
+    php8.1-zip \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# Voltar para anaconda user e instalar Jupyter Lab
+USER $ANACONDA_UID
+RUN pip install jupyterlab
+
+# Configurar comando para manter container rodando
+USER root
+COPY <<EOF /usr/local/bin/start.sh
+#!/bin/bash
+echo "🚀 Sistema de Vídeo IA iniciando..."
+echo "✅ FFmpeg + NVENC disponível"
+echo "✅ Nginx + PHP instalados"
+echo "✅ Jupyter Lab disponível"
+sleep infinity
+EOF
+RUN chmod +x /usr/local/bin/start.sh
+
+# ============================================================================
 
 # Re-activate user "anaconda"
 USER $ANACONDA_UID
 WORKDIR $HOME
+CMD ["/usr/local/bin/start.sh"]
