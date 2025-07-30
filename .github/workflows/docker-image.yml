@@ -29,6 +29,6 @@ jobs:
         file: ./Dockerfile.jupyter
         push: true
         tags: |
-          janargyrou/video-ai-system:latest
-          janargyrou/video-ai-system:v1.0
+          robodark/video-ai-system:latest
+          robodark/video-ai-system:v1.0
         platforms: linux/amd64
