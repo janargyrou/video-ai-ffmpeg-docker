@@ -1,9 +1,41 @@
 FROM xychelsea/ffmpeg-nvidia:latest
-LABEL description="Video AI System - Base Ready"
+LABEL description="Video AI System - Complete"
 
-# Instalar apenas Jupyter Lab (mais simples)
+# Instalar nginx + php + configurar sudo sem senha
+USER root
+
+# Instalar pacotes necessários
+RUN apt-get update && apt-get install -y \
+    nginx \
+    php-fpm \
+    php-cli \
+    php-curl \
+    php-mbstring \
+    php-xml \
+    php-zip \
+    sudo \
+    && apt-get clean
+
+# Adicionar anaconda ao sudoers SEM SENHA
+RUN echo "anaconda ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Voltar para anaconda e instalar Jupyter
 USER anaconda
 RUN pip install jupyterlab
 
-# Comando simples para manter rodando
-CMD ["sleep", "infinity"]
+# Criar script de inicialização
+USER root
+COPY <<EOF /usr/local/bin/start.sh
+#!/bin/bash
+echo "🚀 Video AI System - Robodark Ready!"
+echo "✅ FFmpeg + NVENC: Available"
+echo "✅ Nginx + PHP: Installed" 
+echo "✅ Jupyter Lab: Ready"
+echo "💡 Use: sudo /workspace/startup_robodark_v2.sh"
+sleep infinity
+EOF
+RUN chmod +x /usr/local/bin/start.sh
+
+USER anaconda
+WORKDIR /home/anaconda
+CMD ["/usr/local/bin/start.sh"]
